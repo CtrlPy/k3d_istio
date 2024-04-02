@@ -44,3 +44,14 @@ helm get all istio-base -n istio-system
 helm get all istiod -n istio-system
 helm get all istio-ingress -n istio-ingress
 ```
+note: Use the below command to label the default namespace with the Istio injection-enabled tag
+```zsh 
+kubectl label namespace default istio-injection=enabled
+```
+note: if u gonna use argocd to deploy those charts, u need to getch those repos local on ur side for more visibility
+```zsh 
+helm fetch istio/base --untar
+helm fetch istio/istiod --untar
+helm fetch istio/gateway --untar 
+```
+![alt text](image-5.png)
