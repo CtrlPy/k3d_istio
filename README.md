@@ -100,7 +100,39 @@ spec:
     targetPort: 8080
     name: http
 ```
+![alt text](image-6.png)
 
+* create "hello-app.yaml"
 
+```zsh 
+apiVersion: v1
+kind: Service
+metadata:
+  name: hello-service
+spec:
+  ports:
+  - port: 8080
+    name: http
+  selector:
+    app: hello-app
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    app: hello-app
+  name: hello-app
+spec:
+  containers:
+  - command:
+    - /agnhost
+    - netexec
+    - --http-port=8080
+    image: registry.k8s.io/e2e-test-images/agnhost:2.39
+    name: agnhost
+    ports:
+    - containerPort: 8080
+```
 
+![alt text](image-7.png)
 
