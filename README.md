@@ -16,5 +16,5 @@ asdf install
 step2. **Create k3d cluster without traefik**
 
 ```zsh 
-k3d create --server-arg --no-deploy --server-arg traefik
+k3d cluster create DevOps --agents 2 --api-port 0.0.0.0:6443 -p '9080:80@loadbalancer' --k3s-arg "--disable=traefik@server:*"
 ```
