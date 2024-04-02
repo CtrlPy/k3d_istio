@@ -1,6 +1,6 @@
 # k3d_istio
 
-step1. **asdf install plugin in .tool-versions**
+step 1: **asdf install plugin in .tool-versions**
 
 ![alt text](image-3.png)
 
@@ -12,7 +12,7 @@ asdf install
 
 ![alt text](image-2.png)
 #
-step2. **Create k3d cluster without traefik**
+step 2: **Create k3d cluster without traefik**
 
 ```zsh 
 k3d cluster create DevOps --agents 2 --api-port 0.0.0.0:6443 -p '9080:80@loadbalancer' --k3s-arg "--disable=traefik@server:*"
@@ -26,7 +26,7 @@ k3d cluster create DevOps --agents 2 --api-port 0.0.0.0:6443 -p '9080:80@loadbal
 
 note: if you are using a firewall you can allow this port through $ sudo ufw allow 6443
 #
-step2. **install istio**
+step2: **install istio**
 
 ```zsh 
 helm install istio-base istio/base -n istio-system --create-namespace --set defaultRevision=default
@@ -55,3 +55,52 @@ helm fetch istio/istiod --untar
 helm fetch istio/gateway --untar 
 ```
 ![alt text](image-5.png)
+
+step 3: **enable istio envoy access logs, add telemetry-api.yaml**
+
+```zsh
+apiVersion: telemetry.istio.io/v1alpha1
+kind: Telemetry
+metadata:
+  name: mesh-default
+  namespace: istio-system
+spec:
+  accessLogging:
+    - providers:
+      - name: envoy
+```
+step 4: **try your first apps using istio gateway, add deploy-pod-serv.yaml**
+
+```zsh
+ apiVersion: v1
+kind: Pod
+metadata:
+  name: echo-server
+  labels:
+    app: echo-server
+spec:
+  containers:
+  - name: echoserver
+    image: gcr.io/google_containers/echoserver:1.0
+    imagePullPolicy: IfNotPresent
+    ports:
+    - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: echo-service
+  labels:
+    app: echo-server
+spec:
+  selector:
+    app: echo-server
+  ports:
+  - port: 8080
+    targetPort: 8080
+    name: http
+```
+
+
+
+
