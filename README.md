@@ -13,8 +13,8 @@ asdf install
 ![alt text](image-2.png)
 
 
-step2. **asdf install plugin in .tool-versions**
+step2. **Create k3d cluster without traefik**
 
 ```zsh 
-
+k3d create --server-arg --no-deploy --server-arg traefik
 ```
