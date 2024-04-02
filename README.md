@@ -136,3 +136,26 @@ spec:
 
 ![alt text](image-7.png)
 
+step 5: **we make applications available outside of the Kubernetes cluster by using a gateway and a virtual service that connect the gateway to istio-ingress to route inbound traffic.**
+
+* create "gateway.yaml"
+
+```zsh 
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: ingress-gateway
+  namespace: istio-ingress
+spec:
+  selector:
+    app: istio-ingress
+    istio: ingress
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+    - "*"
+```
+
