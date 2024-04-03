@@ -24,7 +24,8 @@ k3d cluster create DevOps --agents 2 --api-port 0.0.0.0:6443 -p '9080:80@loadbal
 * cluster worker nodes: 2
 * api-server works on port: 6443
 
-note: if you are using a firewall you can allow this port through $ sudo ufw allow 6443
+note: if you are using a firewall you can allow this port through $ `sudo iptables -I INPUT -p tcp --dport 6443 -j ACCEPT
+` arch-linux
 #
 step2: **install istio**
 
@@ -56,20 +57,7 @@ helm fetch istio/gateway --untar
 ```
 ![alt text](image-5.png)
 
-step 3: **enable istio envoy access logs, add telemetry-api.yaml**
-
-```zsh
-apiVersion: telemetry.istio.io/v1alpha1
-kind: Telemetry
-metadata:
-  name: mesh-default
-  namespace: istio-system
-spec:
-  accessLogging:
-    - providers:
-      - name: envoy
-```
-step 4: **try your first apps using istio gateway, add deploy-pod-serv.yaml**
+step 3: **try your first apps using istio gateway, add deploy-pod-serv.yaml**
 
 ```zsh
  apiVersion: v1
@@ -135,8 +123,8 @@ spec:
 ```
 
 ![alt text](image-7.png)
-
-step 5: **we make applications available outside of the Kubernetes cluster by using a gateway and a virtual service that connect the gateway to istio-ingress to route inbound traffic.**
+#
+step 4: **we make applications available outside of the Kubernetes cluster by using a gateway and a virtual service that connect the gateway to istio-ingress to route inbound traffic.**
 
 * create "gateway.yaml"
 
@@ -157,5 +145,36 @@ spec:
       protocol: HTTP
     hosts:
     - "*"
+```
+* create "virtualservice.yaml"
+
+```zsh 
+apiVersion: networking.istio.io/v1alpha3
+kind: VirtualService
+metadata:
+  name: virtualservice
+  namespace: istio-ingress
+spec:
+  hosts:
+  - "*"
+  gateways:
+  - ingress-gateway
+  http:
+  - match:
+    - uri:
+        prefix: /echo
+    route:
+    - destination:
+        host: echo-service.default.svc.cluster.local
+        port:
+          number: 8080
+  - match:
+    - uri:
+        prefix: /hello
+    route:
+    - destination:
+        host: hello-service.default.svc.cluster.local
+        port:
+          number: 8080
 ```
 
