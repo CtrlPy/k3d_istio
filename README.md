@@ -2,13 +2,13 @@
 
 step 1: **asdf install plugin in .tool-versions**
 
-![alt text](image-3.png)
+
 
 ```zsh
 asdf plugin add k3d https://github.com/spencergilbert/asdf-k3d.git &&
 asdf install
 ```
-![alt text](image-1.png)
+
 
 ![alt text](image-2.png)
 #
@@ -17,7 +17,7 @@ step 2: **Create k3d cluster without traefik**
 ```zsh 
 k3d cluster create DevOps --agents 2 --api-port 0.0.0.0:6443 -p '9080:80@loadbalancer' --k3s-arg "--disable=traefik@server:*"
 ```
-![alt text](image-4.png)
+
 
 * cluster name: DevOps
 * cluster master nodes: 1
@@ -88,7 +88,7 @@ spec:
     targetPort: 8080
     name: http
 ```
-![alt text](image-6.png)
+
 
 * create "hello-app.yaml"
 
@@ -122,7 +122,7 @@ spec:
     - containerPort: 8080
 ```
 
-![alt text](image-7.png)
+
 #
 step 4: **we make applications available outside of the Kubernetes cluster by using a gateway and a virtual service that connect the gateway to istio-ingress to route inbound traffic.**
 
